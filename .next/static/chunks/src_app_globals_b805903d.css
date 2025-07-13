@@ -491,6 +491,11 @@ body {
   margin-bottom: .5rem;
 }
 
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .-ml-4 {
   margin-left: -1rem;
 }
@@ -517,6 +522,14 @@ body {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: .5rem;
+}
+
+.ml-3 {
+  margin-left: .75rem;
 }
 
 .block {
@@ -636,6 +649,10 @@ body {
   height: 100svh;
 }
 
+.h-14 {
+  height: 3.5rem;
+}
+
 .max-h-96 {
   max-height: 24rem;
 }
@@ -654,6 +671,10 @@ body {
 
 .min-h-svh {
   min-height: 100svh;
+}
+
+.min-h-screen {
+  min-height: 100vh;
 }
 
 .w-0 {
@@ -770,6 +791,18 @@ body {
 
 .max-w-lg {
   max-width: 32rem;
+}
+
+.max-w-2xl {
+  max-width: 42rem;
+}
+
+.max-w-3xl {
+  max-width: 48rem;
+}
+
+.max-w-4xl {
+  max-width: 56rem;
 }
 
 .flex-1 {
@@ -921,6 +954,10 @@ body {
   gap: 1rem;
 }
 
+.gap-6 {
+  gap: 1.5rem;
+}
+
 .space-x-1 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(.25rem * var(--tw-space-x-reverse));
@@ -955,6 +992,18 @@ body {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.space-y-12 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(3rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(3rem * var(--tw-space-y-reverse));
+}
+
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 
 .overflow-auto {
@@ -1151,13 +1200,27 @@ body {
   background-color: rgb(250 204 21 / var(--tw-bg-opacity, 1));
 }
 
+.bg-card\/50 {
+  background-color: hsl(var(--card) / .5);
+}
+
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
 
 .from-background {
   --tw-gradient-from: hsl(var(--background)) var(--tw-gradient-from-position);
   --tw-gradient-to: hsl(var(--background) / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.from-foreground {
+  --tw-gradient-from: hsl(var(--foreground)) var(--tw-gradient-from-position);
+  --tw-gradient-to: hsl(var(--foreground) / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
@@ -1168,6 +1231,14 @@ body {
 
 .to-muted\/20 {
   --tw-gradient-to: hsl(var(--muted) / .2) var(--tw-gradient-to-position);
+}
+
+.to-foreground\/70 {
+  --tw-gradient-to: hsl(var(--foreground) / .7) var(--tw-gradient-to-position);
+}
+
+.bg-clip-text {
+  background-clip: text;
 }
 
 .fill-current {
@@ -1317,6 +1388,10 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
 }
 
+.font-headline {
+  font-family: Space Grotesk, sans-serif;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1350,6 +1425,16 @@ body {
   line-height: 1rem;
 }
 
+.text-5xl {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
 .font-medium {
   font-weight: 500;
 }
@@ -1362,6 +1447,10 @@ body {
   font-weight: 600;
 }
 
+.font-bold {
+  font-weight: 700;
+}
+
 .tabular-nums {
   --tw-numeric-spacing: tabular-nums;
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
@@ -1369,6 +1458,10 @@ body {
 
 .leading-none {
   line-height: 1;
+}
+
+.leading-relaxed {
+  line-height: 1.625;
 }
 
 .tracking-tight {
@@ -1452,6 +1545,10 @@ body {
 .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity, 1));
+}
+
+.text-transparent {
+  color: #0000;
 }
 
 .underline-offset-4 {
@@ -2514,6 +2611,10 @@ body {
     max-width: 420px;
   }
 
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .md\:text-base {
     font-size: 1rem;
     line-height: 1.5rem;
@@ -2522,6 +2623,16 @@ body {
   .md\:text-sm {
     font-size: .875rem;
     line-height: 1.25rem;
+  }
+
+  .md\:text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .md\:text-6xl {
+    font-size: 3.75rem;
+    line-height: 1;
   }
 
   .md\:opacity-0 {
