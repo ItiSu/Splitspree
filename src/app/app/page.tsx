@@ -3,7 +3,6 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useApp, useAppDispatch } from '@/lib/store/context';
-import AppHeader from '@/components/app-header';
 import UserSetup from '@/components/user-setup';
 import ReceiptsDisplay from '@/components/receipts-display';
 import UserBreakdown from '@/components/user-breakdown';
@@ -60,8 +59,7 @@ export default function AppPage() {
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
-      <div className="flex flex-col h-screen bg-gradient-to-br from-background via-background to-muted/20 text-foreground">
-        <AppHeader />
+      <div className="flex flex-col h-screen text-foreground">
         {isInitialSetup ? (
           <main className="flex-grow flex items-center justify-center p-4">
               <UserSetup />

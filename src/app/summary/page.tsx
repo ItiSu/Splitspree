@@ -4,7 +4,6 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/lib/store/context';
 import UserSummaryCard from '@/components/user-summary-card';
-import AppHeader from '@/components/app-header';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { calculateDebts } from '@/lib/debt-calculator';
@@ -21,7 +20,6 @@ export default function SummaryPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <AppHeader />
       <main className="flex-grow p-4 sm:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8">

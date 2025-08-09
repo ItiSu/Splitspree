@@ -1,0 +1,53 @@
+.pixel-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pixel-card {
+  width: 100%;
+  max-width: min(90vw, 400px);
+  height: auto;
+  min-height: min(70vh, 300px);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  isolation: isolate;
+  user-select: none;
+  mask: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(45deg, transparent 0%, black 20%, black 80%, transparent 100%), linear-gradient(-45deg, transparent 0%, black 20%, black 80%, transparent 100%);
+  -webkit-mask: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(45deg, transparent 0%, black 20%, black 80%, transparent 100%), linear-gradient(-45deg, transparent 0%, black 20%, black 80%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+@media (max-width: 768px) {
+  .pixel-card {
+    max-width: 95vw;
+    min-height: min(60vh, 250px);
+  }
+}
+
+@media (max-width: 480px) {
+  .pixel-card {
+    max-width: 98vw;
+    min-height: min(50vh, 200px);
+  }
+}
+
+.pixel-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, #09090b, transparent 85%);
+  opacity: 0;
+  transition: opacity 800ms cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.pixel-card:hover::before,
+.pixel-card:focus-within::before {
+  opacity: 1;
+}

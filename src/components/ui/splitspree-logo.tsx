@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Receipt, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface SplitspreeLogoProps {
@@ -13,29 +13,26 @@ export const SplitspreeLogo = ({
   className,
   size = "md"
 }: SplitspreeLogoProps) => {
-  const iconSize = {
-    sm: { main: 16, sparkle: 12 },
-    md: { main: 24, sparkle: 16 }, 
-    lg: { main: 32, sparkle: 20 }
+  const dimensions = {
+    sm: { width: 40, height: 40 },
+    md: { width: 48, height: 48 }, 
+    lg: { width: 64, height: 64 }
   };
 
   return (
-    <div className={cn("relative", className)}>
-      <Receipt 
+    <div className={cn("relative flex items-center justify-center", className)}>
+      <Image
+        src="/ss-logo.png"
+        alt="SplitSpree Logo"
+        width={dimensions[size].width}
+        height={dimensions[size].height}
         className={cn(
-          "text-primary",
-          size === "sm" && "h-4 w-4",
-          size === "md" && "h-6 w-6",
-          size === "lg" && "h-8 w-8"
-        )} 
-      />
-      <Sparkles 
-        className={cn(
-          "text-yellow-500 absolute -top-1 -right-1 animate-pulse",
-          size === "sm" && "h-3 w-3",
-          size === "md" && "h-4 w-4",
-          size === "lg" && "h-5 w-5"
+          "object-contain",
+          size === "sm" && "w-10 h-10",
+          size === "md" && "w-12 h-12",
+          size === "lg" && "w-16 h-16"
         )}
+        priority
       />
     </div>
   );

@@ -1,82 +1,58 @@
 "use client";
-
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
-import { Receipt, Users, Calculator, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import ScrollVelocity from '@/components/TextScroll';
 
 export default function WelcomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
-      <div className="max-w-4xl mx-auto text-center space-y-12">
-        {/* Hero Section */}
-        <div className="space-y-6">
-          <div className="flex justify-center">
-            <div className="relative">
-              <Receipt className="h-16 w-16 text-primary" />
-              <Sparkles className="h-6 w-6 text-yellow-500 absolute -top-1 -right-1 animate-pulse" />
-            </div>
-          </div>
-          <h1 className="text-5xl md:text-6xl font-headline font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            SplitSpree
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            AI-powered bill splitting made simple. Upload receipts, assign items, and let us handle the math.
-          </p>
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Top Section - Logo, Subtitle, and Scrolling Animation */}
+      <div className="flex-1 flex flex-col items-center justify-center -mt-24 sm:-mt-28 md:-mt-32">
+        <div className="flex justify-center !m-0 !p-0">
+          <Image
+            src="/ss-logo.png"
+            alt="SplitSpree Logo"
+            width={400}
+            height={400}
+            className="h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80 object-contain !m-0 !p-0 block"
+            priority
+          />
         </div>
-
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="pb-4">
-              <Receipt className="h-8 w-8 text-primary mx-auto mb-2" />
-              <CardTitle className="text-lg">Smart Receipt Parsing</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Upload photos of receipts and our AI automatically extracts items and prices
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="pb-4">
-              <Users className="h-8 w-8 text-primary mx-auto mb-2" />
-              <CardTitle className="text-lg">Easy Group Setup</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Add friends to your group and assign items with simple drag-and-drop
-              </CardDescription>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="pb-4">
-              <Calculator className="h-8 w-8 text-primary mx-auto mb-2" />
-              <CardTitle className="text-lg">Automatic Calculations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Get instant breakdowns of who owes what, with optimized payment suggestions
-              </CardDescription>
-            </CardContent>
-          </Card>
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground -mt-16 sm:-mt-20 md:-mt-24 mb-16">
+          AI-powered bill splitting made simple
+        </p>
+        
+        {/* Scrolling Animation */}
+        <div className="w-screen overflow-hidden">
+          <ScrollVelocity
+            texts={['Upload Receipt', 'AI Extracts Items', 'Assign to Friends', 'Get Breakdown']}
+            velocity={25}
+            className="text-muted-foreground/70"
+            parallaxClassName="parallax"
+            scrollerClassName="scroller"
+          />
         </div>
+      </div>
 
-        {/* CTA Section */}
-        <div className="space-y-6">
-          <Link href="/app" passHref>
-            <Button size="lg" className="h-14 px-8 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 animate-in fade-in zoom-in-95">
+      {/* Bottom Section - CTA and Footer */}
+      <div className="flex-shrink-0 flex flex-col items-center justify-center pb-8 sm:pb-12 space-y-4 sm:space-y-6">
+        <div>
+          <Link href="/app">
+            <Button
+              size="lg"
+              className="h-12 px-6 sm:px-8 text-base font-semibold"
+            >
               Start Splitting Now
-              <ArrowRight className="ml-3 h-6 w-6" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
-          <p className="text-sm text-muted-foreground">
-            No signup required • Free to use • Works on any device
-          </p>
         </div>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          No signup required • Free to use
+        </p>
       </div>
     </div>
   );

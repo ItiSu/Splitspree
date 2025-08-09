@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useAppDispatch } from '@/lib/store/context';
 import { v4 as uuidv4 } from 'uuid';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { Plus, User, ArrowRight, Trash2, Receipt, Sparkles } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from './ui/card';
+import { Plus, User, ArrowRight, X, Users } from 'lucide-react';
 
 const UserSetup = () => {
   const [name, setName] = useState('');
@@ -35,74 +35,120 @@ const UserSetup = () => {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-2xl border-border/50 bg-card/50 backdrop-blur-sm mx-auto my-8">
-        <CardHeader className="text-center p-8">
-          <div className="flex justify-center mb-4">
-            <div className="relative">
-              <Receipt className="h-12 w-12 text-primary" />
-              <Sparkles className="h-5 w-5 text-yellow-500 absolute -top-1 -right-1 animate-pulse" />
-            </div>
+    <div className="min-h-screen flex justify-center pt-2 sm:pt-4 overflow-hidden">
+      <div className="w-full max-w-md mx-auto">
+        
+        {/* Header Section */}
+        <div className="text-center mb-4 space-y-4">
+          <div className="flex justify-center">
+            <Image
+              src="/ss-logo.png"
+              alt="SplitSpree Logo"
+              width={200}
+              height={200}
+              className="h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 lg:h-72 lg:w-72 object-contain"
+              priority
+            />
           </div>
-          <CardTitle className="text-3xl font-headline font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            SplitSpree
-          </CardTitle>
-          <CardDescription className="text-muted-foreground pt-2 text-lg">
-            Add people to your group to start splitting bills
-          </CardDescription>
-        </CardHeader>
-      <CardContent className="p-8 pt-0">
-        <form onSubmit={handleAddUser} className="flex gap-2 mb-6 animate-in fade-in zoom-in-95">
-          <Input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter a name..."
-            className="flex-grow h-12 text-base border-border/70 focus-visible:ring-primary/50"
-          />
-          <Button 
-            type="submit" 
-            size="lg" 
-            className="px-4 h-12 bg-primary/90 hover:bg-primary transition-all" 
-            disabled={!name.trim()}
-          >
-            <Plus className="w-5 h-5" />
-            <span className="sr-only">Add User</span>
-          </Button>
-        </form>
+          
+          <div className="space-y-2">
+            <p className="text-base sm:text-lg text-muted-foreground/80 font-medium">
+              Add people to your group to start splitting bills
+            </p>
+          </div>
+        </div>
 
-        <div className="space-y-2 min-h-[60px]">
-          {users.map((user, index) => (
-            <div 
-              key={index} 
-              className="flex items-center justify-between bg-card/70 p-3 rounded-lg border border-border/50 animate-in fade-in slide-in-from-bottom-3"
-            >
-              <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-primary" />
-                <span className="font-medium">{user}</span>
-              </div>
+        {/* Main Content */}
+        <div className="space-y-6">
+          
+          {/* Add User Form */}
+          <form onSubmit={handleAddUser}>
+            <div className="relative">
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter a name..."
+                className="h-12 text-base pl-4 pr-16 bg-card/50 backdrop-blur-sm border-border/50 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary/50 rounded-xl transition-all duration-200"
+              />
               <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
-                onClick={() => handleRemoveUser(user)}
+                type="submit" 
+                size="icon"
+                className="absolute right-1 top-1 h-10 w-10 rounded-lg bg-primary hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl" 
+                disabled={!name.trim()}
               >
-                <Trash2 className="w-4 h-4" />
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
-          ))}
-        </div>
-      </CardContent>
+          </form>
 
-      <CardFooter className="p-8 pt-0">
-        <Button 
-          onClick={handleFinishSetup} 
-          className="w-full h-14 text-lg font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 animate-in fade-in zoom-in-95"
-          disabled={users.length === 0}
-        >
-          Start Splitting <ArrowRight className="ml-3 h-6 w-6" />
-        </Button>
-      </CardFooter>
-    </Card>
+          {/* Users List */}
+          {users.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground/70 font-medium">
+                <Users className="w-4 h-4" />
+                <span>{users.length} {users.length === 1 ? 'person' : 'people'} added</span>
+              </div>
+              
+              <div className="space-y-2 max-h-[40vh] overflow-y-auto">
+                {users.map((user, index) => (
+                  <div 
+                    key={index} 
+                    className="group flex items-center justify-between bg-card/30 backdrop-blur-sm p-3 rounded-lg border border-border/30 hover:border-border/50 transition-all duration-200 animate-in fade-in slide-in-from-bottom-2"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="w-3.5 h-3.5 text-primary" />
+                      </div>
+                      <span className="font-medium text-foreground text-sm">{user}</span>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-7 w-7 rounded-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
+                      onClick={() => handleRemoveUser(user)}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {users.length === 0 && (
+            <div className="text-center py-8 space-y-2">
+              <div className="w-12 h-12 mx-auto rounded-full bg-muted/20 flex items-center justify-center">
+                <Users className="w-6 h-6 text-muted-foreground/50" />
+              </div>
+              <p className="text-muted-foreground/60 text-sm">
+                No one added yet. Start by adding the first person!
+              </p>
+            </div>
+          )}
+
+          {/* Continue Button */}
+          <div className="pt-2">
+            <Button 
+              onClick={handleFinishSetup} 
+              className="w-full h-12 text-base font-semibold rounded-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:hover:scale-100 disabled:opacity-50"
+              disabled={users.length === 0}
+            >
+              {users.length === 0 ? (
+                <>Add people to continue</>
+              ) : (
+                <>
+                  Start Splitting
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
