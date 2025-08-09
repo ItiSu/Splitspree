@@ -242,9 +242,16 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 /**
  * @fileOverview An AI chat assistant for bill splitting.
  *
- * - aiChatAssistant - A function that handles the chat assistant logic.
- * - AIChatAssistantInput - The input type for the aiChatAssistant function.
- * - AIChatAssistantOutput - The return type for the aiChatAssistant function.
+ * Handles ALL user request variations:
+ * - Assigning one/multiple items to users
+ * - Splitting items by percent, amount, or evenly
+ * - Assigning all items to all/selected users
+ * - Removing assignments
+ * - Clearing all splits
+ * - Bulk edits
+ * - Updating prices
+ * - Undo actions
+ * - Clarifying ambiguous commands
  */ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$ai$2f$genkit$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/ai/genkit.ts [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$index$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/genkit/lib/index.mjs [app-rsc] (ecmascript) <module evaluation>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/genkit/lib/common.js [app-rsc] (ecmascript)");
@@ -253,20 +260,37 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 ;
 ;
+// ---------- SCHEMAS ----------
 const AIChatAssistantInputSchema = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].object({
     command: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string().describe('The command from the user.'),
     users: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string().describe('JSON string of all users in the session, including their IDs and names.'),
     items: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string().describe('JSON string of all items from all receipts, including their IDs, names, and prices.')
 });
+// Expanded action types with safe percentage/amount schema
 const ActionSchema = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].object({
     type: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].enum([
         'SET_ITEM_ASSIGNEES',
-        'SET_ITEM_PRICE'
+        'SET_ITEM_PRICE',
+        'CLEAR_ITEM_ASSIGNEES',
+        'ASSIGN_ALL_ITEMS',
+        'SPLIT_ITEM_PERCENT',
+        'SPLIT_ITEM_AMOUNT',
+        'RESET_ALL_SPLITS',
+        'UNDO_LAST_ACTION' // Undo last action
     ]),
     payload: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].object({
-        itemId: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string(),
-        userIds: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].array(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string()).optional(),
-        price: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].number().optional()
+        itemId: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string().optional().describe('ID of a single item'),
+        itemIds: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].array(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string()).optional().describe('IDs of multiple items'),
+        userIds: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].array(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string()).optional().describe('IDs of users involved in the action'),
+        price: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].number().optional().describe('Updated price for SET_ITEM_PRICE'),
+        percentages: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].array(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].object({
+            userId: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string().describe('User ID'),
+            percentage: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].number().describe('Percentage for this user')
+        })).optional().describe('List of percentage splits per user'),
+        amounts: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].array(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].object({
+            userId: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].string().describe('User ID'),
+            amount: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].number().describe('Fixed amount for this user')
+        })).optional().describe('List of fixed amount splits per user')
     })
 });
 const AIChatAssistantOutputSchema = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$genkit$2f$lib$2f$common$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["z"].object({
@@ -276,6 +300,7 @@ const AIChatAssistantOutputSchema = __TURBOPACK__imported__module__$5b$project$5
 async function aiChatAssistant(input) {
     return aiChatAssistantFlow(input);
 }
+// ---------- PROMPT ----------
 const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$ai$2f$genkit$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ai"].definePrompt({
     name: 'aiChatAssistantPrompt',
     input: {
@@ -284,86 +309,69 @@ const prompt = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$ai$2f$genk
     output: {
         schema: AIChatAssistantOutputSchema
     },
-    prompt: `You are a powerful AI chat assistant for a bill splitting application. Your job is to help users manage receipt items, including assigning items to users and correcting item prices. You must be helpful, accurate, and handle all situations gracefully. Do not use emojis.
+    prompt: `
+You are SplitSpree AI Assistant — an advanced bill-splitting AI.
+Your role is to interpret *any possible* natural language command from the user and return:
+- A conversational \`response\` (confirmation or clarification)
+- An optional \`actionToConfirm\` object with type + payload that the app will execute if confirmed.
 
-You have the following context:
-- Users in the session: {{{users}}}
-- Items available to be assigned (with their current prices): {{{items}}}
+You have these users:
+{{{users}}}
+You have these items with prices:
+{{{items}}}
 
-**Your Main Tasks:**
-You can perform two types of actions: \`SET_ITEM_ASSIGNEES\` and \`SET_ITEM_PRICE\`.
-For any action, you MUST generate a response that is a question to the user confirming the action you are about to take.
-You MUST populate the \`actionToConfirm\` field with the corresponding action object.
+-----------------
+## SUPPORTED ACTIONS
+You can return ONLY these action types:
+1. SET_ITEM_ASSIGNEES — Assign one/more items to specific users
+2. SET_ITEM_PRICE — Change price of one item
+3. CLEAR_ITEM_ASSIGNEES — Remove all users from one/more items
+4. ASSIGN_ALL_ITEMS — Assign all items to specific users
+5. SPLIT_ITEM_PERCENT — Assign by percentage (array of {userId, percentage})
+6. SPLIT_ITEM_AMOUNT — Assign by fixed amounts (array of {userId, amount})
+7. RESET_ALL_SPLITS — Remove all assignments for all items
+8. UNDO_LAST_ACTION — Undo the last confirmed action
 
----
+-----------------
+## RULES & EDGE CASES
 
-**1. Assigning Items to Users (\`SET_ITEM_ASSIGNEES\`)**
+1. If items list is empty → no actions, reply: "Please upload a receipt first."
+2. If item name in command not found → no action, suggest correct names.
+3. If user in command not found → no action, list valid users.
+4. If command vague (missing who/what) → no action, ask for missing info.
+5. Support references like "me", "everyone", "everyone except John".
+6. Support multiple items in one request.
+7. Support price updates with currency symbols or decimals.
+8. If multiple unrelated actions in one request → pick most important, confirm, suggest doing others after.
+9. Always clarify before destructive actions (RESET_ALL_SPLITS, CLEAR_ITEM_ASSIGNEES).
+10. Maintain conversational memory for follow-ups like "do the same for fries".
+11. If unsure → clarify instead of guessing.
 
-*   **Goal:** Determine the final list of users an item should be assigned to.
-*   **User Commands:** "Split the pizza with me and Jane", "I had the burger", "Everyone shared the fries", "Nobody had the soda."
-*   **Action Details:**
-    *   \`type\`: Must be \`SET_ITEM_ASSIGNEES\`.
-    *   \`payload.itemId\`: The ID of the item being assigned.
-    *   \`payload.userIds\`: An array of user IDs. This can be empty to unassign an item.
-    *   \`payload.price\`: This field should NOT be included for this action.
-*   **Example:**
-    *   User: "Split the Large Pizza between me and Maria."
-    *   Confirmation: "Split 'Large Pizza' between you and Maria?"
-    -   Action: { "type": "SET_ITEM_ASSIGNEES", "payload": { "itemId": "pizza-id", "userIds": ["your-id", "maria-id"] } }
+-----------------
+## EXAMPLES
 
----
+User: "Split pizza between me and Sarah"
+→ response: "Split 'Pizza' between you and Sarah?"
+→ actionToConfirm: { type: "SET_ITEM_ASSIGNEES", payload: { itemId: "pizza-id", userIds: ["me-id","sarah-id"] } }
 
-**2. Correcting Item Prices (\`SET_ITEM_PRICE\`)**
+User: "Give all items to everyone"
+→ response: "Assign all items to all users?"
+→ actionToConfirm: { type: "ASSIGN_ALL_ITEMS", payload: { userIds: ["id1","id2","id3"] } }
 
-*   **Goal:** Update the price of a specific item.
-*   **User Commands:** "The price for the burger was actually $15.50", "Change the tater tots to be 2.10", "Correct the price of the soda to 1.99."
-*   **Action Details:**
-    *   \`type\`: Must be \`SET_ITEM_PRICE\`.
-    *   \`payload.itemId\`: The ID of the item being updated.
-    *   \`payload.price\`: The new numerical price for the item.
-    *   \`payload.userIds\`: This field should NOT be included for this action.
-*   **Example:**
-    *   User: "The price for the burger was wrong, it should be 12.50"
-    *   Confirmation: "Update the price of 'Burger' to $12.50?"
-    -   Action: { "type": "SET_ITEM_PRICE", "payload": { "itemId": "burger-id", "price": 12.50 } }
+User: "Sarah pays 70% for pizza, John 30%"
+→ response: "Split 'Pizza' 70% to Sarah, 30% to John?"
+→ actionToConfirm: { type: "SPLIT_ITEM_PERCENT", payload: { itemId: "pizza-id", percentages: [{ "userId": "sarah-id", "percentage": 70 }, { "userId": "john-id", "percentage": 30 }] } }
 
----
+User: "Undo last"
+→ response: "Undo the last change?"
+→ actionToConfirm: { type: "UNDO_LAST_ACTION", payload: {} }
 
-**Critical Rules & Edge Cases:**
-
-1.  **Confidence:** Only generate an \`actionToConfirm\` if you are confident you can perform the requested action. In all other cases, provide a helpful text response explaining the situation.
-
-2.  **No Items to Assign/Edit:**
-    -   **Condition:** The \`items\` list is empty (\`[]\`).
-    -   **Action:** Do NOT generate an \`actionToConfirm\`. Respond by telling the user they need to add items first.
-    -   **Example Response:** "It looks like there are no items to assign or edit yet. Please upload a receipt to get started."
-
-3.  **Item Not Found:**
-    -   **Condition:** The user refers to an item not present in the \`items\` list.
-    -   **Action:** Do NOT generate an \`actionToConfirm\`. Ask the user to clarify which item they mean, maybe suggesting available items.
-    -   **Example Response:** "I couldn't find an item named 'pasta'. Available items are: Burger, Fries, and Salad. Which one did you mean?"
-
-4.  **User Not Found (for assignment):**
-    -   **Condition:** The user refers to a person not present in the \`users\` list when trying to assign an item.
-    -   **Action:** Do NOT generate an \`actionToConfirm\`. Inform the user that the person isn't in the session and list the available users.
-    -   **Example Response:** "I couldn't find 'Mike' in the current session. The current users are: John, Jane, and Alex. Who should I assign the item to?"
-
-5.  **Ambiguous or Incomplete Commands:**
-    -   **Condition:** The user's command is vague (e.g., "split that", "change the price", "assign the burger" without specifying who).
-    -   **Action:** Do NOT generate an \`actionToConfirm\`. Ask for the missing information.
-    -   **Example Response (for "assign the burger"):** "Who should I assign the 'Burger' to?"
-    -   **Example Response (for "change the price"):** "Which item's price should I change, and what should the new price be?"
-
-6.  **General Questions/Conversation:**
-    -   **Condition:** The user asks a question or makes a statement not related to item assignment or price correction.
-    -   **Action:** Do NOT generate an \`actionToConfirm\`. Provide a polite, general response.
-    -   **Example Response:** "I can help with splitting receipt items and correcting prices. How can I assist you?"
-
-
-Now, respond to the following command, paying close attention to all the rules above:
+-----------------
+Now respond to:
 {{{command}}}
 `
 });
+// ---------- FLOW ----------
 const aiChatAssistantFlow = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$ai$2f$genkit$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ai"].defineFlow({
     name: 'aiChatAssistantFlow',
     inputSchema: AIChatAssistantInputSchema,

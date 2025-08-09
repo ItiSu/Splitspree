@@ -24,7 +24,7 @@ export default function SummaryPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-headline font-semibold">Final Breakdown</h1>
-            <Button asChild variant="outline">
+            <Button asChild variant="star" size="lg" className="text-base font-semibold">
               <Link href="/app">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Edit

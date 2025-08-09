@@ -42,8 +42,9 @@ export default function WelcomePage() {
         <div>
           <Link href="/app">
             <Button
+              variant="star"
               size="lg"
-              className="h-12 px-6 sm:px-8 text-base font-semibold"
+              className="text-base font-semibold"
             >
               Start Splitting Now
               <ArrowRight className="ml-2 h-4 w-4" />

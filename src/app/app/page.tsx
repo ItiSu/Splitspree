@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useApp, useAppDispatch } from '@/lib/store/context';
 import UserSetup from '@/components/user-setup';
@@ -73,9 +74,9 @@ export default function AppPage() {
               {allItemsAssigned && (
                 <div className="sticky bottom-4 z-20 w-full flex justify-center mt-4">
                     <Link href="/summary" passHref>
-                        <Button className="shadow-2xl hover:shadow-3xl transition-all duration-300 animate-in fade-in zoom-in-95 h-10 text-sm px-3 xs:h-8 xs:text-xs xs:px-2 sm:h-10 sm:text-sm md:h-12 md:text-base">
+                        <Button variant="star" size="lg" className="text-base font-semibold">
                             Show Final Breakdown
-                            <ArrowRight className="ml-2 h-4 w-4 xs:ml-1 xs:h-3 xs:w-3 sm:ml-2 sm:h-4 sm:w-4" />
+                            <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     </Link>
                 </div>
@@ -89,12 +90,33 @@ export default function AppPage() {
         
         {!isInitialSetup && !isChatOpen && (
           <Button
-            onClick={() => setIsChatOpen(true)}
-            size="icon"
-            className="fixed bottom-6 right-6 z-40 rounded-full h-16 w-16 shadow-2xl animate-in fade-in zoom-in-95"
+            onClick={() => {
+              setIsChatOpen(true);
+              setTimeout(() => {
+                const input = document.querySelector('#ai-chat-input') as HTMLInputElement;
+                if (input) {
+                  input.focus();
+                  setTimeout(() => {
+                    const messages = document.querySelector('.ai-chat-messages') as HTMLDivElement;
+                    if (messages) {
+                      messages.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }, 100);
+                }
+              }, 100);
+            }}
+            variant="star"
+            size="lg"
+            className="fixed bottom-6 right-6 z-40 rounded-full h-16 w-16 p-0 flex items-center justify-center"
             aria-label="Open AI Chat"
           >
-                  <ReceiptChatIcon className="h-7 w-7" />
+            <Image 
+              src="/chat-logo.png"
+              alt="AI Chat"
+              width={24}
+              height={24}
+              className="h-6 w-6"
+            />
           </Button>
         )}
         {isChatOpen && <AiChat onClose={() => setIsChatOpen(false)} />}

@@ -69,12 +69,13 @@ const UserSetup = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter a name..."
-                className="h-12 text-base pl-4 pr-16 bg-card/50 backdrop-blur-sm border-border/50 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:border-primary/50 rounded-xl transition-all duration-200"
+                className="h-12 text-base pl-6 pr-16 bg-card/70 backdrop-blur-md border-border/70 rounded-full transition-all duration-200 focus:border-border/70 focus:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none [&:focus]:bg-card/80 [&:focus-visible]:bg-card/80 !outline-none !ring-0 !ring-offset-0"
               />
               <Button 
                 type="submit" 
                 size="icon"
-                className="absolute right-1 top-1 h-10 w-10 rounded-lg bg-primary hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl" 
+                variant="star"
+                className="absolute right-1 top-1 h-10 w-10 transition-all duration-200" 
                 disabled={!name.trim()}
               >
                 <Plus className="w-4 h-4" />
@@ -94,7 +95,7 @@ const UserSetup = () => {
                 {users.map((user, index) => (
                   <div 
                     key={index} 
-                    className="group flex items-center justify-between bg-card/30 backdrop-blur-sm p-3 rounded-lg border border-border/30 hover:border-border/50 transition-all duration-200 animate-in fade-in slide-in-from-bottom-2"
+                    className="group flex items-center justify-between bg-card/30 backdrop-blur-sm p-3 rounded-full border border-border/30 hover:border-border/50 transition-all duration-200 animate-in fade-in slide-in-from-bottom-2"
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex items-center gap-3">
@@ -103,10 +104,10 @@ const UserSetup = () => {
                       </div>
                       <span className="font-medium text-foreground text-sm">{user}</span>
                     </div>
-                    <Button 
+                      <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="h-7 w-7 rounded-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
+                      className="h-7 w-7 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
                       onClick={() => handleRemoveUser(user)}
                     >
                       <X className="w-3.5 h-3.5" />
@@ -128,12 +129,15 @@ const UserSetup = () => {
               </p>
             </div>
           )}
+          
 
           {/* Continue Button */}
           <div className="pt-2">
             <Button 
               onClick={handleFinishSetup} 
-              className="w-full h-12 text-base font-semibold rounded-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:hover:scale-100 disabled:opacity-50"
+              variant="star"
+              size="star"
+              className="w-full h-12 text-base font-semibold transition-all duration-300 disabled:opacity-50"
               disabled={users.length === 0}
             >
               {users.length === 0 ? (
