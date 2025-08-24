@@ -8,7 +8,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Hand, Users, MousePointerClick } from 'lucide-react';
+import { Hand, Users, MousePointerClick, MessageSquare } from 'lucide-react';
 
 interface HelpDialogProps {
   isOpen: boolean;
@@ -56,6 +56,17 @@ export default function HelpDialog({ isOpen, onClose }: HelpDialogProps) {
               <h3 className="font-semibold text-white">Assign to Multiple People</h3>
               <p className="text-muted-foreground text-sm">
                 To split an item between specific people, drag it to each person one by one. The cost will be divided equally among the assignees.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="p-2 bg-primary/10 rounded-full">
+                <MessageSquare className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-white">Use AI Chat for Splitting</h3>
+              <p className="text-muted-foreground text-sm">
+                Click the AI chat button to get help with complex splitting scenarios.
               </p>
             </div>
           </div>

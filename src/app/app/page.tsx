@@ -117,11 +117,11 @@ export default function AppPage() {
             <Button
               onClick={handleHelpClick}
               variant="star"
-              size="lg"
-              className={`rounded-full h-16 w-16 p-0 flex items-center justify-center ${showPulsatingHint ? 'pulsate' : ''}`}
+              size="icon"
+              className={`rounded-full h-12 w-12 p-0 flex items-center justify-center ${showPulsatingHint ? 'pulsate' : ''}`}
               aria-label="Open Help"
             >
-              <HelpCircle className="h-8 w-8" />
+              <HelpCircle className="h-6 w-6" />
             </Button>
             <Button
               onClick={() => {
@@ -140,16 +140,16 @@ export default function AppPage() {
               }, 100);
             }}
             variant="star"
-            size="lg"
-            className="rounded-full h-16 w-16 p-0 flex items-center justify-center"
+            size="icon"
+            className="rounded-full h-12 w-12 p-0 flex items-center justify-center"
             aria-label="Open AI Chat"
           >
             <Image 
               src="/chat-logo.png"
               alt="AI Chat"
-              width={24}
-              height={24}
-              className="h-6 w-6"
+              width={20}
+              height={20}
+              className="h-5 w-5"
             />
             </Button>
           </div>

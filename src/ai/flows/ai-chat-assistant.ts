@@ -18,6 +18,11 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
+// Check if AI is available (should only be available server-side)
+if (!ai) {
+  throw new Error('AI is not available in this environment');
+}
+
 // ---------- SCHEMAS ----------
 const AIChatAssistantInputSchema = z.object({
   command: z.string().describe('The command from the user.'),
@@ -129,9 +134,9 @@ User: "Give all items to everyone"
 → response: "Assign all items to all users?"
 → actionToConfirm: { type: "ASSIGN_ALL_ITEMS", payload: { userIds: ["id1","id2","id3"] } }
 
-User: "Sarah pays 70% for pizza, John 30%"
-→ response: "Split 'Pizza' 70% to Sarah, 30% to John?"
-→ actionToConfirm: { type: "SPLIT_ITEM_PERCENT", payload: { itemId: "pizza-id", percentages: [{ "userId": "sarah-id", "percentage": 70 }, { "userId": "john-id", "percentage": 30 }] } }
+User: "Bikash pays 70% for pizza, John 30%"
+→ response: "Split 'Pizza' 70% to Bikash, 30% to John?"
+→ actionToConfirm: { type: "SPLIT_ITEM_PERCENT", payload: { itemId: "pizza-id", percentages: [{ "userId": "bikash-id", "percentage": 70 }, { "userId": "john-id", "percentage": 30 }] } }
 
 User: "Undo last"
 → response: "Undo the last change?"

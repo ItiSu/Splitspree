@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AppProvider } from '@/lib/store/context';
 import DarkVeil from '@/components/DarkVeil';
+import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'SplitSpree',
@@ -47,10 +48,9 @@ export default function RootLayout({
         }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased relative">
+      <body className="antialiased relative">
         <div className="fixed inset-0 -z-10">
           <DarkVeil 
             hueShift={30}
@@ -64,6 +64,7 @@ export default function RootLayout({
         <AppProvider>
           {children}
           <Toaster />
+          <Footer />
         </AppProvider>
       </body>
     </html>
