@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { useApp, useAppDispatch } from '@/lib/store/context';
-import { parseReceipt, ParseReceiptOutput } from '@/ai/flows/parse-receipt';
+import { ParseReceiptOutput } from '@/ai/flows/parse-receipt';
+import { parseReceiptApi } from '@/lib/api-client';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from './ui/button';
-import { Upload, Loader2, PartyPopper, CheckCircle, ArrowRight, User } from 'lucide-react';
+import { Upload, Loader2, PartyPopper, CheckCircle, ArrowRight, User, XCircle } from 'lucide-react';
 import { FileUpload } from './ui/file-upload';
 import PixelCard from './pixel-card';
 import {
@@ -31,6 +32,8 @@ const ReceiptUploader = ({ isWelcome = false }: ReceiptUploaderProps) => {
   const [parsedData, setParsedData] = useState<ParseReceiptOutput | null>(null);
   const [payerId, setPayerId] = useState<string>("");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleFileUpload = async (files: File[]) => {
     const file = files[0];
@@ -42,18 +45,29 @@ const ReceiptUploader = ({ isWelcome = false }: ReceiptUploaderProps) => {
     reader.onload = async () => {
       const receiptDataUri = reader.result as string;
       try {
-        const result = await parseReceipt({ receiptDataUri });
-        setParsedData(result);
-        if (users.length > 0) {
-          setPayerId(users[0].id);
+        const result = await parseReceiptApi(receiptDataUri);
+        // Validate the result to ensure it's a valid receipt
+        if (result && result.storeName && result.date && result.total) {
+          setParsedData(result);
+          if (users.length > 0) {
+            setPayerId(users[0].id);
+          }
+        } else {
+          // This case handles when the AI fails to parse the receipt properly
+          // or returns an incomplete object.
+          setErrorMessage("The uploaded image could not be processed as a receipt. Please try a different image.");
+          setIsErrorModalOpen(true);
+          setParsedData(null);
         }
       } catch (error) {
         console.error("Error parsing receipt:", error);
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem parsing your receipt.",
-        });
+        let msg = "There was a problem parsing your receipt.";
+        if (error instanceof Error && error.message.includes('not a valid receipt')) {
+          msg = "The uploaded image is not a valid receipt. Please upload a clear photo of a receipt.";
+        }
+        setErrorMessage(msg);
+        setIsErrorModalOpen(true);
+        setParsedData(null);
       } finally {
         setIsLoading(false);
       }
@@ -117,6 +131,25 @@ const ReceiptUploader = ({ isWelcome = false }: ReceiptUploaderProps) => {
           }} disabled={isLoading} />
         </div>
       )}
+
+      <Dialog open={isErrorModalOpen} onOpenChange={setIsErrorModalOpen}>
+        <DialogContent className="sm:max-w-md bg-card/70 backdrop-blur-md border-border/70 rounded-3xl shadow-xl">
+          <div className="text-center py-8">
+            <div className="mx-auto w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
+              <XCircle className="w-8 h-8 text-red-500" />
+            </div>
+            <DialogHeader>
+              <DialogTitle className="text-xl font-semibold text-red-500">Invalid Receipt</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                {errorMessage}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-6">
+              <Button onClick={() => setIsErrorModalOpen(false)} variant="star" size="lg" className="w-full text-base font-semibold">OK</Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!parsedData} onOpenChange={() => setParsedData(null)}>
         <DialogContent className="sm:max-w-md bg-card/70 backdrop-blur-md border-border/70 rounded-3xl shadow-xl">

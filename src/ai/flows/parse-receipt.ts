@@ -41,10 +41,13 @@ const ParseReceiptOutputSchema = z.object({
 export type ParseReceiptOutput = z.infer<typeof ParseReceiptOutputSchema>;
 
 export async function parseReceipt(input: ParseReceiptInput): Promise<ParseReceiptOutput> {
+  if (!ai) {
+    throw new Error("AI not initialized");
+  }
   return parseReceiptFlow(input);
 }
 
-const parseReceiptPrompt = ai.definePrompt({
+const parseReceiptPrompt = ai!.definePrompt({
   name: 'parseReceiptPrompt',
   input: {schema: ParseReceiptInputSchema},
   output: {schema: ParseReceiptOutputSchema},
@@ -59,6 +62,7 @@ const parseReceiptPrompt = ai.definePrompt({
 - For each item, you must provide a 'description'.
 - The description should be a clarified, common name for the item based on the receipt name.
 - If the item name on the receipt is cryptic or abbreviated (e.g., "HRI CL CHS"), use your knowledge to provide a more common name (e.g., "Hillshire Farm Cheddar Cheese").
+- **Accuracy is critical.** Do not guess. Use your extensive knowledge to identify the item as if you were performing an internet search to find the most likely product.
 - If the name is already clear and common (e.g., "Apple"), just repeat the name for the description.
 - **Important - Handling Quantity and Unit Price:**
   - If a line item includes details about quantity and unit price, you MUST include this in the description.
@@ -73,7 +77,7 @@ Return the data in JSON format, adhering strictly to the rules above.
 `,
 });
 
-const parseReceiptFlow = ai.defineFlow(
+const parseReceiptFlow = ai!.defineFlow(
   {
     name: 'parseReceiptFlow',
     inputSchema: ParseReceiptInputSchema,

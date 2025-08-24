@@ -8,8 +8,14 @@ export const metadata: Metadata = {
   title: 'SplitSpree',
   description: 'AI-powered bill splitting from receipts.',
   icons: {
-    icon: '/ss-logo.png',
-    shortcut: '/ss-logo.png',
+    icon: [
+      { url: '/favicon_light.ico', media: '(prefers-color-scheme: light)' },
+      { url: '/favicon_dark.ico', media: '(prefers-color-scheme: dark)' }
+    ],
+    shortcut: [
+      { url: '/favicon_light.ico', media: '(prefers-color-scheme: light)' },
+      { url: '/favicon_dark.ico', media: '(prefers-color-scheme: dark)' }
+    ],
     apple: '/ss-logo.png',
   },
 };
@@ -22,6 +28,23 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              function updateFavicon() {
+                const favicon = document.querySelector('link[rel="icon"]');
+                if (favicon) {
+                  favicon.href = window.matchMedia('(prefers-color-scheme: dark)').matches 
+                    ? '/favicon_dark.ico' 
+                    : '/favicon_light.ico';
+                }
+              }
+              const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+              mediaQuery.addEventListener('change', updateFavicon);
+              updateFavicon();
+            })();
+          `
+        }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />

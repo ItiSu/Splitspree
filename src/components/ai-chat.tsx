@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useApp, useAppDispatch } from "@/lib/store/context";
-import { aiChatAssistant } from "@/ai/flows/ai-chat-assistant";
+import { aiChatApi } from "@/lib/api-client";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Send, User, Loader2, X } from "lucide-react";
@@ -81,11 +81,11 @@ const AiChat = ({ onClose }: AiChatProps) => {
         users.map((u) => ({ id: u.id, name: u.name }))
       );
 
-      const response = await aiChatAssistant({
-        command: userMessage.content,
-        users: relevantUsers,
-        items: relevantItems,
-      });
+      const response = await aiChatApi(
+        userMessage.content,
+        relevantUsers,
+        relevantItems
+      );
 
       const assistantMessage: Message = {
         id: uuidv4(),
@@ -147,7 +147,7 @@ const AiChat = ({ onClose }: AiChatProps) => {
               onChange={(e) => setInput(e.target.value)}
               placeholder="e.g. Split pizza with me and Jane"
               disabled={isLoading}
-              className="flex-grow h-12 text-base pl-6 pr-4 bg-transparent border-none focus:outline-none"
+              className="flex-grow h-12 text-base pl-6 pr-4 bg-transparent border-none focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
             />
             <div className="flex items-center gap-1">
               <Button
@@ -168,7 +168,7 @@ const AiChat = ({ onClose }: AiChatProps) => {
                 size="icon"
                 variant="ghost"
                 onClick={onClose}
-                className="rounded-full w-10 h-10 text-muted-foreground hover:text-card-foreground"
+                className="rounded-full w-10 h-10 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
               >
                 <X className="w-4 h-4" />
               </Button>

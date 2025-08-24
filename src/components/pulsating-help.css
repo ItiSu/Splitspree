@@ -1,0 +1,15 @@
+.pulsate {
+  animation: pulsate-animation 2s infinite;
+}
+
+@keyframes pulsate-animation {
+  0% {
+    box-shadow: 0 0 0 0 rgba(253, 224, 71, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(253, 224, 71, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(253, 224, 71, 0);
+  }
+}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useApp } from '@/lib/store/context';
 import UserSummaryCard from '@/components/user-summary-card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Home } from 'lucide-react';
 import { calculateDebts } from '@/lib/debt-calculator';
 
 export default function SummaryPage() {
@@ -24,12 +24,20 @@ export default function SummaryPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-headline font-semibold">Final Breakdown</h1>
-            <Button asChild variant="star" size="lg" className="text-base font-semibold">
-              <Link href="/app">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Edit
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+              <Button asChild variant="outline" size="sm" className="sm:text-base">
+                <Link href="/">
+                  <Home className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  Home
+                </Link>
+              </Button>
+              <Button asChild variant="star" size="sm" className="sm:text-base sm:font-semibold">
+                <Link href="/app">
+                  <ArrowLeft className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  Back to Edit
+                </Link>
+              </Button>
+            </div>
           </div>
 
           {users.length > 0 ? (

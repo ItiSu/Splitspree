@@ -1,27 +1,4 @@
 {
-  "node": {
-    "40b6d00e0f7bce7064d70ac119c32694599d3ddffb": {
-      "workers": {
-        "app/app/page": {
-          "moduleId": "[project]/.next-internal/server/app/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/ai-chat-assistant.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/parse-receipt.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/app/page": "action-browser"
-      }
-    },
-    "40ba6bf6c5326ccdcfde81d6d5302e056e949c364c": {
-      "workers": {
-        "app/app/page": {
-          "moduleId": "[project]/.next-internal/server/app/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/ai-chat-assistant.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/parse-receipt.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/app/page": "action-browser"
-      }
-    }
-  },
+  "node": {},
   "edge": {}
 }
